@@ -7,7 +7,7 @@ Implementation of active contour loss function for medical image segmentation ba
 
 The arXiv version of this paper will be available soon. (the latest one)
 
-![](/home/xuchen/Desktop/CVPR2019/github/intro.png) 
+![](https://github.com/xuuuuuuchen/Active-Contour-Loss/blob/master/img/intro.png?raw=true) 
 
 ##Requirements
 
