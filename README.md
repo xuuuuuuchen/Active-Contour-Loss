@@ -1,25 +1,25 @@
-#Active Contour Loss#
+# Active Contour Loss
 
 Implementation of active contour loss function for medical image segmentation based on **"Learning Active Contour Models for Medical Image Segmentation"** by Chen, Xu, et al.
 
 
-##Introduction##
+## Introduction
 
 The arXiv version of this paper will be available soon. (the latest one)
 
 ![](https://github.com/xuuuuuuchen/Active-Contour-Loss/blob/master/img/intro.png?raw=true) 
 
-##Requirements##
+## Requirements
 
 Tensorflow >= 1.5 
 Keras >= 2.0
 Numpy
 
-##Training##
+## Training
 
 A pretrained model might be suggested to use, because somtimes active contour loss function may not be stable in the early steps for training.
 
-##Citation##
+## Citation
 If you find Active-Contour-Loss is useful in your research work, please consider to cite:
 
 	@inproceedings{chen2019learning,
@@ -30,5 +30,5 @@ If you find Active-Contour-Loss is useful in your research work, please consider
 	  year={2019}
 	}
 
-##Other 3rd-Party Re-implementation##
+## Other 3rd-Party Re-implementation##
 TBC
