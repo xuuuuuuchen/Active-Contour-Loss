@@ -1,58 +1,39 @@
-def ACWE(y_true, y_pred): 
-	print "y_true " +str(y_true.shape)
-	print "y_pred " +str(y_pred.shape)
-	print "y_pred " +str(y_pred)
-	u = y_pred
-	#u = K.cast(y_pred, dtype = 'float64')
-	print "u " +str(u)
-	#(?, ?, ?, ?)
-	#(?, 1, 256, 256)
-	#x = K.zeros(shape = (y_pred.shape[0],y_pred.shape[1],y_pred.shape[2]-1, y_pred.shape[3]))
-	#y = K.zeros(shape = (y_pred.shape[0],y_pred.shape[1],y_pred.shape[2],y_pred.shape[3]-1))
-	x = u[:,:,1:,:] - u[:,:,:-1,:]
-	y = u[:,:,:,1:] - u[:,:,:,:-1]
-	print "x " +str(x)
-	print "y " +str(y)
-	print "x " +str(x.shape)
-	print "y " +str(y.shape)
-	#(?, 1, 255, 256)
-	#(?, 1, 256, 255)
-	#for i in range(x.shape[2]):
-		#for j in range(y.shape[3]):
-    			#delta_x = x[:,:,0:,:-1]
-			#delta_y = y[:,:,:-1,0:]
-	#delta_u = K.zeros(shape = (x.shape[0],x.shape[1],x.shape[2],y.shape[3]))
-	#delta_u = K.sqrt( K.pow( x[:,:,0:,:-1], 2) + K.pow( y[:,:,:-1,0:] , 2))
+
+from keras import backend as K
+import numpy as np
+
+
+def Active_Contour_Loss(y_true, y_pred): 
+
+	#y_pred = K.cast(y_pred, dtype = 'float64')
+
+	"""
+	lenth term
+	"""
+
+	x = y_pred[:,:,1:,:] - y_pred[:,:,:-1,:] # horizontal and vertical directions 
+	y = y_pred[:,:,:,1:] - y_pred[:,:,:,:-1]
+
 	delta_x = x[:,:,1:,:-2]**2
 	delta_y = y[:,:,:-2,1:]**2
-	delta_u = K.abs(delta_x + delta_y)
+	delta_u = K.abs(delta_x + delta_y) 
 
-	print "delta_x " +str(delta_x)
-	print "delta_x " +str(delta_x.shape)
+	epsilon = 0.00000001 # where is a parameter to avoid square root is zero in practice.
+	w = 1
+	lenth = w * K.sum(K.sqrt(delta_u + epsilon)) # equ.(11) in the paper
 
-	delta_u = K.sqrt(delta_u + 0.00000001)
-	print "delta_u " +str(delta_u)
-	print "delta_u " +str(delta_u.shape)
-
-	#delta = 0
-	delta = K.sum(delta_u)
-	#print "delta " +str(delta)
-	#print "delta " +str(delta.shape)
+	"""
+	region term
+	"""
 
 	C_1 = np.ones((256, 256))
-    	C_2 = np.zeros((256, 256))
+	C_2 = np.zeros((256, 256))
 
-	lamda = 1
-	mu = 1
+	region_in = K.abs(K.sum( y_pred[:,0,:,:] * ((y_true[:,0,:,:] - C_1)**2) ) ) # equ.(12) in the paper
+	region_out = K.abs(K.sum( (1-y_pred[:,0,:,:]) * ((y_true[:,0,:,:] - C_2)**2) )) # equ.(12) in the paper
 
-	g = 1 
-
-	lenth = g * delta
-
-	region1 = K.abs(K.sum( y_pred[:,0,:,:] * ((y_true[:,0,:,:] - C_1)**2) ) )    
+	lambdaP = 1 # lambda parameter could be various.
 	
-	region2 = K.abs(K.sum( (1-y_pred[:,0,:,:]) * ((y_true[:,0,:,:] - C_2)**2) ))
+	loss =  lenth + lambdaP * (region_in + region_out) 
 
-	E =  mu * lenth + lamda * (region1 + region2)
-
-	return E
+	return loss
